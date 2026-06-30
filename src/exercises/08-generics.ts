@@ -19,9 +19,10 @@
  */
 
 // TODO: make it generic over the element type T
-export function firstOrNull<___>(items: ___): ___ {
+export function firstOrNull<T>(items: T[]): T | null {
   return items.length > 0 ? items[0] : null;
 }
+
 
 /* ---- 8b. Constrained generic + keyof ----
  * `pluck` takes an object and a key OF THAT OBJECT, and returns the
@@ -37,7 +38,7 @@ export function firstOrNull<___>(items: ___): ___ {
  */
 
 // TODO: <T, K extends keyof T>(obj: T, key: K): T[K]
-export function pluck<___>(obj: ___, key: ___): ___ {
+export function pluck<T, K extends keyof T>(obj: T, key: K): T[K] {
   return obj[key];
 }
 
@@ -53,11 +54,23 @@ export function pluck<___>(obj: ___, key: ___): ___ {
  * THROWS on failure. Narrow on `ok`. */
 
 // TODO: generic discriminated union
-export type ApiResult<T> = ___;
+export type ApiResult<T> =
+  | {
+      ok: true;
+      data: T;
+    }
+  | {
+      ok: false;
+      error: string;
+    };
 
 // TODO: return T; throw new Error(result.error) on failure
 export function unwrap<T>(result: ApiResult<T>): T {
-  // TODO: narrow on result.ok
+  if (result.ok) {
+    return result.data;
+  }
+
+  throw new Error(result.error);
 }
 
 // These must type-check once ApiResult/unwrap are correct:
